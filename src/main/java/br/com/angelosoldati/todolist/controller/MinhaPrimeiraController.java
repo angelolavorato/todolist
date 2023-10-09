@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 // http://localhost:8080/------------------------------------------------
 public class MinhaPrimeiraController {
   /**
-   * Métdos de acesso do HTTP
+   * Métodos de acesso do HTTP
    * GET - Buscar uma informação
    * POST- Adicionar um dado/informação
    * PUT- Alterar um dado/informação
@@ -20,7 +20,7 @@ public class MinhaPrimeiraController {
    */
 
   // Método (funcionalidade ) de uma classe
-  @GetMapping("/")
+  @GetMapping("/primeiroMetodo")
   public String primeiraMensagem() {
     return "Funcionou";
 
