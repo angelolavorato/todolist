@@ -28,39 +28,44 @@ public class FilterTaskAuth extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    // Pegar a autenticação (Usuario e senha)
-    var authorization = request.getHeader("Authorization");
+    var servletPath = request.getServletPath();
+    if (servletPath.equals("/tasks/")) {
+      // Pegar a autenticação (Usuario e senha)
+      var authorization = request.getHeader("Authorization");
 
-    var authEncoded = authorization.substring("Basic".length()).trim();
+      var authEncoded = authorization.substring("Basic".length()).trim();
 
-    byte[] authDecode = Base64.getDecoder().decode(authEncoded);
+      byte[] authDecode = Base64.getDecoder().decode(authEncoded);
 
-    var authString = new String(authDecode);
+      var authString = new String(authDecode);
 
-    String[] credentials = authString.split(":");
-    String username = credentials[0];
-    String password = credentials[1];
-    System.out.println("Authorization");
-    System.out.println(username);
-    System.out.println(password);
+      String[] credentials = authString.split(":");
+      String username = credentials[0];
+      String password = credentials[1];
+      System.out.println("Authorization");
+      System.out.println(username);
+      System.out.println(password);
 
-    // Validar usuário
-    var user = this.userRepository.findByUsername(username);
-    if (user == null) {
-    } else {
-
-      // Validar senha
-      var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
-      if (passwordVerify.verified) {
-
-        filterChain.doFilter(request, response);
-
+      // Validar usuário
+      var user = this.userRepository.findByUsername(username);
+      if (user == null) {
       } else {
 
-        response.sendError(401);
+        // Validar senha
+        var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+        if (passwordVerify.verified) {
 
+          filterChain.doFilter(request, response);
+
+        } else {
+
+          response.sendError(401);
+
+        }
+        // segue
       }
-      // segue
+    } else {
+      filterChain.doFilter(request, response);
 
     }
 
