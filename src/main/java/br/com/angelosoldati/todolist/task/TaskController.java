@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.angelosoldati.todolist.utils.Utils;
 import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.var;
@@ -65,7 +66,13 @@ public class TaskController {
   // funcionalidade de att a tasks
   @PutMapping("/{id}")
   public TaskModel update(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id) {
+    var idUser = request.getAttribute("idUser");
 
+    var task = this.taskRepository.findById(id);
+
+    Utils.copyNonNullProerties(taskModel, task);
+
+    taskModel.setIdUser((UUID) idUser);
     taskModel.setId(id);
     return this.taskRepository.save(taskModel);
   }
